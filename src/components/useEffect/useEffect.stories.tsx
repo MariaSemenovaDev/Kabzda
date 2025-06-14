@@ -115,11 +115,73 @@ export const SetIntervalExample = () => {
 // дз: сделать часики
 
 
-
-
     return <>
     hello, counter: {counter}, fake: {fake}
         {/*<button onClick={() => setFake(fake + 1)}>fake</button>*/}
         {/*<button onClick={() => setCounter(counter + 1)}>counter</button>*/}
     </>
+}
+
+export const ResetEffectExample = () => {
+    const [counter, setCounter] = useState(1);
+    useEffect(()=>{
+        console.log('Effect occurred ' + counter);
+
+        //return сбрасывает useEffect
+        return () => {
+            console.log('Reset effect ' + counter);
+        }
+
+        //сначала запускает зачистку старого эффекта  console.log('Reset effect');
+        // затем новый эффукт console.log('Effect occurred');
+    }, [counter])
+    return <>
+        <div>
+            hello, counter: {counter}
+        </div>
+
+        <button onClick={() => setCounter(counter + 1)}>count</button>
+    </>
+}
+
+export const OnKeysTrackerExample = () => {
+    const [text, setText] = useState('');
+    useEffect(() => {
+
+        const handleKeyPress = (e: KeyboardEvent) => {
+            setText(prevText => prevText + e.key);
+        };
+
+        window.addEventListener('keypress', handleKeyPress);
+
+        //  очистка эффекта при размонтировании
+        return () => {
+            window.removeEventListener('keypress', handleKeyPress);
+        };
+    }, [text]); // перезапускай зависимость когда текст меняется
+    return <>
+        <div>
+            typed text: {text}
+        </div>
+
+    </>
+}
+export const SetTimeoutExample2 = () => {
+    const [text, setText] = useState('');
+
+    console.log('Component rendered with: ' + text);
+
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
+            setText('3 seconds passed');
+        }, 3000)
+
+        return () => clearTimeout(timeoutID)
+    }, [text]);
+
+    return (
+        <>
+            Text: {text}
+        </>
+    )
 }
